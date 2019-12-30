@@ -1,0 +1,146 @@
+---
+# YAML documents begin with the document separator ---
+
+# The minus in YAML this indicates a list item.  The playbook contains a list
+# of plays, with each play being a dictionary
+-
+
+  # Target: where our play will run and options it will run with
+  hosts: all
+
+  # Task: the list of tasks that will be executed within the play, this section
+  # can also be used for pre and post tasks
+  tasks:
+    - name: Change hostname to {{inventory_hostname}}
+      hostname:
+        name: "Local-{{inventory_hostname}}"
+
+    - name: Add IP address to /etc/hosts
+      lineinfile:
+        dest: /etc/hosts
+        line: "{{ansible_host}} {{ansible_hostname}}"
+        state: present
+   
+    - name: Install packages
+      yum:
+        name: '{{packages}}'
+        update_cache: yes
+        state: present
+      vars:
+        packages:
+          [epel-release,dos2unix,java-1.8.0-openjdk.x86_64,wget,bzip2,zip,tar,unzip,rsync,vim,mc,curl,net-tools]
+      when: ansible_distribution == 'CentOS'
+ 
+    - name: Copy Java versions
+      copy:
+        src: files/java.tar.gz
+        dest: /usr/
+   
+    - name: Extract java version
+      unarchive:
+        src: /usr/java.tar.gz
+        dest: /usr/
+        remote_src: yes
+
+    - name: Make java 6 alternatives
+      command: 'alternatives --install "/usr/bin/java" "java" "/usr/java/jdk1.6.0_45/bin/java" 2000'
+
+    - name: Make java 6 jar alternatives
+      command: 'alternatives --install "/usr/bin/jar" "jar" "/usr/java/jdk1.6.0_45/bin/jar" 2000'
+
+    - name: Make java 6 javac alternatives
+      command: 'alternatives --install "/usr/bin/javac" "javac" "/usr/java/jdk1.6.0_45/bin/javac" 2000'
+
+    - name: Make java 8 alternatives
+      command: 'alternatives --install "/usr/bin/java" "java" "/usr/java/jdk1.8.0_191/bin/java" 3000'
+
+    - name: Make java 8 jar alternatives
+      command: 'alternatives --install "/usr/bin/jar" "jar" "/usr/java/jdk1.8.0_191/bin/jar" 3000'
+
+    - name: Make java 8 javac alternatives
+      command: 'alternatives --install "/usr/bin/javac" "javac" "/usr/java/jdk1.8.0_191/bin/javac" 3000'
+
+    - name: Alternative java
+      alternatives:
+        name: java
+        link: /usr/bin/java
+        path: /usr/java/jdk1.6.0_45/bin/java
+ 
+    - name: Disable SElinux
+      selinux:
+        state: disabled
+
+    - name: Disable firewall
+      service:
+        name: firewalld
+        state: stopped
+        enabled: False
+
+    - name: Copy geopos service
+      copy:
+        src: files/geopos
+        dest: /etc/init.d/
+
+    - name: Copy activemq service
+      copy:
+        src: files/activemq
+        dest: /etc/init.d/
+
+    - name: Copy geointegration service
+      copy:
+        src: files/geointegration
+        dest: /etc/init.d/
+
+    - name: Copy geopromotion service
+      copy:
+        src: files/geopromotion
+        dest: /etc/init.d/
+
+    - name: Copy jboss service
+      copy:
+        src: files/jboss
+        dest: /etc/init.d/
+
+    - name: Copy tomcat service
+      copy:
+        src: files/tomcat
+        dest: /etc/init.d/
+
+    - name: Enable geopos services
+      command: 'chkconfig --add geopos'
+
+    - name: Enable activemq services
+      command: 'chkconfig --add activemq'
+
+    - name: Enable geointegration services
+      command: 'chkconfig --add geointegration'
+
+    - name: Enable geopromotion services
+      command: 'chkconfig --add geopromotion'
+
+    - name: Enable jboss services
+      command: 'chkconfig --add jboss'
+    
+    - name: Enable tomcat services
+      command: 'chkconfig --add tomcat'
+
+    - name: Enable geopos services on
+      command: 'chkconfig geopos on'
+    
+    - name: Enable activemq services on
+      command: 'chkconfig activemq on'
+
+    - name: Enable geopromotion services on
+      command: 'chkconfig geopromotion on'
+
+    - name: Enable geointegration services on
+      command: 'chkconfig geointegration on'
+
+    - name: Enable jboss services on
+      command: 'chkconfig jboss on'
+
+    - name: Enable tomcat services on
+      command: 'chkconfig tomcat on'
+
+...
+

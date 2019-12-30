@@ -1,0 +1,21 @@
+---
+- hosts: nodes
+  become: true
+  vars:
+    mariadb_mirror: 'mariadb.mirror.nucleus.be/yum'
+    mariadb_bind_address: '0.0.0.0'
+    mariadb_root_password: 'geocom'
+    mariadb_databases:
+      - name: geopromotion
+      - name: geopos
+      - name: consolereport
+      - name: geoinventarios
+      - name: geoinventarios_gam
+      - name: geointegration
+    mariadb_users:
+      - name: root
+        password: 'geocom'
+        priv: "*.*:ALL,GRANT"
+        host: "192.168.%"
+  roles:
+    - mariadb

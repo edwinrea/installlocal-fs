@@ -1,0 +1,153 @@
+#
+# These groups are read by MariaDB server.
+# Use it for options that only the server (but not clients) should see
+#
+# See the examples of server my.cnf files in /usr/share/mysql/
+#
+
+# this is read by the standalone daemon and embedded servers
+[server]
+
+# this is only for the mysqld standalone daemon
+[mysqld]
+gtid_domain_id  = {{inventory_hostname}}
+server_id       = {{inventory_hostname}}
+user            = mysql
+pid-file        = /var/lib/mysql/mysql.pid
+socket          = /var/lib/mysql/mysql.sock
+port            = 3306
+basedir         = /usr
+
+init_connect='SET @@local.collation_connection=latin1_general_ci'
+tmpdir          = /tmp
+lc_messages_dir = /usr/share/mysql
+skip-external-locking
+skip-name-resolve
+skip-symbolic-links
+lower-case-table-names = 1
+character-set-server=latin1
+collation-server=latin1_general_ci
+log_bin_trust_function_creators = 1
+
+
+#innodb_force_recovery = 5
+
+event_scheduler = ON
+
+max_connections         = 150
+connect_timeout         = 30
+wait_timeout            = 28800
+interactive_timeout	= 28800
+net_read_timeout        = 1800
+net_write_timeout       = 3600
+max_allowed_packet      = 64M
+thread_cache_size       = 16
+sort_buffer_size        = 512K
+bulk_insert_buffer_size = 2M
+tmp_table_size          = 64M
+max_heap_table_size     = 64M
+table_cache             = 256
+table_definition_cache  = 400
+
+join_buffer_size	= 2M
+key_buffer_size         = 128K
+
+table_open_cache        = 256
+read_buffer_size        = 512K
+read_rnd_buffer_size    = 64K
+
+query_cache_limit       = 256K
+query_cache_min_res_unit= 1K
+query_cache_size        = 16M
+query_cache_type        = ON
+
+datadir                         = /opt/ibdata/
+default_storage_engine          = InnoDB
+innodb_data_home_dir            = /opt/ibdata/
+innodb_log_group_home_dir       = /opt/iblogs/
+
+log_warnings    = 1
+log_error       = /var/log/mysqld.log
+
+slow_query_log          = ON
+slow_query_log_file     = /var/log/mysql/mariadb-slow.log
+long_query_time         = 10
+# log_slow_verbosity      = query_plan
+
+general_log = OFF
+## log_output  = TABLE
+log_output  = FILE
+
+log_bin               = /opt/iblogs/local{{inventory_hostname}}-bin
+log_bin_index         = /opt/iblogs/local{{inventory_hostname}}-bin.index
+binlog_format         = ROW
+binlog_cache_size     = 65536
+expire_logs_days      = 5
+max_binlog_size       = 256M
+# sync_binlog           = 10
+
+transaction-isolation   = READ-COMMITTED
+
+innodb_thread_concurrency    = 6
+innodb_log_file_size         = 256M
+innodb_buffer_pool_size      = 2048M
+innodb_log_buffer_size       = 16M
+innodb-buffer-pool-instances = 2
+innodb_file_per_table        = 1
+innodb_flush_method          = O_DIRECT
+innodb_flush_log_at_trx_commit = 2
+innodb-io-capacity           = 400
+innodb-doublewrite           = 0
+innodb_write_io_threads      = 4
+innodb_read_io_threads       = 4
+
+binlog_do_db = geoinventarios
+binlog_do_db = geoinventarios_gam
+
+log_slave_updates     = OFF
+replicate-same-server-id = 1
+relay_log             = /opt/iblogs/localrelay
+relay_log_index       = /opt/iblogs/localrelay.index
+relay_log_info_file   = masterslave.info
+max_relay_log_size    = 64M
+relay_log_purge       = ON
+
+############################skip_slave_start
+
+## sync-relay-log=1
+sync-relay-log-info=1
+
+report_host      = local{{inventory_hostname}}
+slave_transaction_retries     = 15
+
+replicate_do_db             = geoinventarios
+replicate_do_db             = geoinventarios_gam
+
+replicate_wild_do_table     = geoinventarios.cen%
+replicate-wild-ignore-table = geoinventarios.suc%
+replicate-wild-ignore-table = geoinventarios.pro%
+
+replicate-wild-do-table     = geoinventarios_gam.a%
+replicate-wild-do-table     = geoinventarios_gam.b%
+replicate-wild-do-table     = geoinventarios_gam.c%
+replicate-wild-do-table     = geoinventarios_gam.o%
+replicate-wild-do-table     = geoinventarios_gam.r%
+replicate-wild-do-table     = geoinventarios_gam.sec%
+replicate-wild-do-table     = geoinventarios_gam.sys%
+replicate-wild-do-table     = geoinventarios_gam.u%
+replicate-wild-ignore-table = geoinventarios_gam.session%
+
+
+# this is only for embedded server
+[embedded]
+
+# This group is only read by MariaDB servers, not by MySQL.
+# If you use the same .cnf file for MySQL and MariaDB,
+# you can put MariaDB-only options here
+[mariadb]
+
+# This group is only read by MariaDB-10.0 servers.
+# If you use the same .cnf file for MariaDB of different versions,
+# use this group for options that older servers don't understand
+[mariadb-10.0]
+

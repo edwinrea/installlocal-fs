@@ -1,0 +1,12 @@
+1 - Modificar el archivo hosts colocando el/los locales nuevos, ejemplo
+
+[nodes]
+882 ansible_ssh_host=192.168.3.248
+959 ansible_ssh_host=192.168.3.249
+
+Es importante que la primera columna sea el numero del local
+
+2 - Correr el siguiente comando para ejecutar los playbooks
+
+ansible-playbook installLocal.yml installMariadb.yml -i hosts
+
